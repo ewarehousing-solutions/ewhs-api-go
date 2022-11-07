@@ -23,12 +23,14 @@ type Client struct {
 	config  *Config
 
 	// Services
-	Inbounds  *InboundsService
-	Orders    *OrdersService
-	Stock     *StockService
-	Shipments *ShipmentsService
-	Variants  *VariantsService
-	Webhooks  *WebhooksService
+	Articles        *ArticlesService
+	Inbounds        *InboundsService
+	Orders          *OrdersService
+	Stock           *StockService
+	Shipments       *ShipmentsService
+	ShippingMethods *ShippingMethodsService
+	Variants        *VariantsService
+	Webhooks        *WebhooksService
 }
 
 type service struct {
@@ -158,10 +160,12 @@ func NewClient(baseClient *http.Client, c *Config) Client {
 	ewhs.common.client = &ewhs
 
 	// services for resources
+	ewhs.Articles = (*ArticlesService)(&ewhs.common)
 	ewhs.Inbounds = (*InboundsService)(&ewhs.common)
 	ewhs.Orders = (*OrdersService)(&ewhs.common)
 	ewhs.Stock = (*StockService)(&ewhs.common)
 	ewhs.Shipments = (*ShipmentsService)(&ewhs.common)
+	ewhs.ShippingMethods = (*ShippingMethodsService)(&ewhs.common)
 	ewhs.Variants = (*VariantsService)(&ewhs.common)
 	ewhs.Webhooks = (*WebhooksService)(&ewhs.common)
 
