@@ -1,6 +1,7 @@
 package ewhs
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -32,8 +33,8 @@ type VariantListOptions struct {
 	Direction string `url:"direction,omitempty"`
 }
 
-func (vs *VariantsService) List(opts *VariantListOptions) (list *[]Variant, res *Response, err error) {
-	res, err = vs.client.get("wms/variants/", opts)
+func (vs *VariantsService) List(ctx context.Context, opts *VariantListOptions) (list *[]Variant, res *Response, err error) {
+	res, err = vs.client.get(ctx, "wms/variants/", opts)
 	if err != nil {
 		return
 	}
@@ -45,8 +46,8 @@ func (vs *VariantsService) List(opts *VariantListOptions) (list *[]Variant, res 
 	return
 }
 
-func (vs *VariantsService) Get(variantID string) (variant *Variant, res *Response, err error) {
-	res, err = vs.client.get(fmt.Sprintf("wms/variants/%s/", variantID), nil)
+func (vs *VariantsService) Get(ctx context.Context, variantID string) (variant *Variant, res *Response, err error) {
+	res, err = vs.client.get(ctx, fmt.Sprintf("wms/variants/%s/", variantID), nil)
 	if err != nil {
 		return
 	}
@@ -58,8 +59,8 @@ func (vs *VariantsService) Get(variantID string) (variant *Variant, res *Respons
 	return
 }
 
-func (vs *VariantsService) Create(ord Order) (order *Order, res *Response, err error) {
-	res, err = vs.client.post("wms/variants/", ord, nil)
+func (vs *VariantsService) Create(ctx context.Context, ord Order) (order *Order, res *Response, err error) {
+	res, err = vs.client.post(ctx, "wms/variants/", ord, nil)
 
 	if err != nil {
 		return
@@ -72,8 +73,8 @@ func (vs *VariantsService) Create(ord Order) (order *Order, res *Response, err e
 	return
 }
 
-func (vs *VariantsService) Update(variantID string, vr Variant) (variant *Variant, res *Response, err error) {
-	res, err = vs.client.patch(fmt.Sprintf("wms/variants/%s/", variantID), vr, nil)
+func (vs *VariantsService) Update(ctx context.Context, variantID string, vr Variant) (variant *Variant, res *Response, err error) {
+	res, err = vs.client.patch(ctx, fmt.Sprintf("wms/variants/%s/", variantID), vr, nil)
 
 	if err != nil {
 		return

@@ -1,6 +1,7 @@
 package ewhs
 
 import (
+	"context"
 	"encoding/json"
 	"time"
 )
@@ -34,8 +35,8 @@ type StockListOptions struct {
 	Direction   string `url:"direction,omitempty"`
 }
 
-func (ss *StockService) List(opts *StockListOptions) (list *[]Stock, res *Response, err error) {
-	res, err = ss.client.get("wms/stock/", opts)
+func (ss *StockService) List(ctx context.Context, opts *StockListOptions) (list *[]Stock, res *Response, err error) {
+	res, err = ss.client.get(ctx, "wms/stock/", opts)
 	if err != nil {
 		return
 	}

@@ -1,6 +1,7 @@
 package ewhs
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -14,8 +15,8 @@ type Webhook struct {
 	HashSecret string `json:"hash_secret,omitempty"`
 }
 
-func (ws *WebhooksService) List() (list *[]Webhook, res *Response, err error) {
-	res, err = ws.client.get("wms/webhooks/", nil)
+func (ws *WebhooksService) List(ctx context.Context) (list *[]Webhook, res *Response, err error) {
+	res, err = ws.client.get(ctx, "wms/webhooks/", nil)
 	if err != nil {
 		return
 	}
@@ -27,8 +28,8 @@ func (ws *WebhooksService) List() (list *[]Webhook, res *Response, err error) {
 	return
 }
 
-func (ws *WebhooksService) Get(webhookID string) (webhook *Webhook, res *Response, err error) {
-	res, err = ws.client.get(fmt.Sprintf("webhooks/%s/", webhookID), nil)
+func (ws *WebhooksService) Get(ctx context.Context, webhookID string) (webhook *Webhook, res *Response, err error) {
+	res, err = ws.client.get(ctx, fmt.Sprintf("webhooks/%s/", webhookID), nil)
 	if err != nil {
 		return
 	}
@@ -40,22 +41,8 @@ func (ws *WebhooksService) Get(webhookID string) (webhook *Webhook, res *Respons
 	return
 }
 
-func (ws *WebhooksService) Create(wh Webhook) (webhook *Webhook, res *Response, err error) {
-	res, err = ws.client.post("webhooks/", wh, nil)
-
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(res.content, &webhook); err != nil {
-		return
-	}
-
-	return
-}
-
-func (ws *WebhooksService) Update(webhookID string, wh Webhook) (webhook *Webhook, res *Response, err error) {
-	res, err = ws.client.patch(fmt.Sprintf("webhooks/%s/", webhookID), wh, nil)
+func (ws *WebhooksService) Create(ctx context.Context, wh Webhook) (webhook *Webhook, res *Response, err error) {
+	res, err = ws.client.post(ctx, "webhooks/", wh, nil)
 
 	if err != nil {
 		return
@@ -68,8 +55,22 @@ func (ws *WebhooksService) Update(webhookID string, wh Webhook) (webhook *Webhoo
 	return
 }
 
-func (os *OrdersService) Delete(webhookID string) (webhook *Webhook, res *Response, err error) {
-	res, err = os.client.delete(fmt.Sprintf("webhooks/%s/", webhookID), nil)
+func (ws *WebhooksService) Update(ctx context.Context, webhookID string, wh Webhook) (webhook *Webhook, res *Response, err error) {
+	res, err = ws.client.patch(ctx, fmt.Sprintf("webhooks/%s/", webhookID), wh, nil)
+
+	if err != nil {
+		return
+	}
+
+	if err = json.Unmarshal(res.content, &webhook); err != nil {
+		return
+	}
+
+	return
+}
+
+func (os *OrdersService) Delete(ctx context.Context, webhookID string) (webhook *Webhook, res *Response, err error) {
+	res, err = os.client.delete(ctx, fmt.Sprintf("webhooks/%s/", webhookID), nil)
 	if err != nil {
 		return
 	}

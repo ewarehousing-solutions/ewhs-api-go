@@ -1,6 +1,7 @@
 package ewhs
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -23,8 +24,8 @@ type ShippingMethodListOptions struct {
 	Direction string `url:"direction,omitempty"`
 }
 
-func (ss *ShippingMethodsService) List(opts *ShippingMethodListOptions) (list *[]ShippingMethod, res *Response, err error) {
-	res, err = ss.client.get("wms/shippingmethods/", opts)
+func (ss *ShippingMethodsService) List(ctx context.Context, opts *ShippingMethodListOptions) (list *[]ShippingMethod, res *Response, err error) {
+	res, err = ss.client.get(ctx, "wms/shippingmethods/", opts)
 	if err != nil {
 		return
 	}
@@ -36,8 +37,8 @@ func (ss *ShippingMethodsService) List(opts *ShippingMethodListOptions) (list *[
 	return
 }
 
-func (ss *ShippingMethodsService) Get(shippingMethodID string) (shippingMethod *ShippingMethod, res *Response, err error) {
-	res, err = ss.client.get(fmt.Sprintf("wms/shippingmethods/%s/", shippingMethodID), nil)
+func (ss *ShippingMethodsService) Get(ctx context.Context, shippingMethodID string) (shippingMethod *ShippingMethod, res *Response, err error) {
+	res, err = ss.client.get(ctx, fmt.Sprintf("wms/shippingmethods/%s/", shippingMethodID), nil)
 	if err != nil {
 		return
 	}

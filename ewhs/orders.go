@@ -1,6 +1,7 @@
 package ewhs
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -43,7 +44,7 @@ type ShippingAddress struct {
 	AddressedTo          string `json:"addressed_to,omitempty"`
 	PhoneNumber          string `json:"phone_number,omitempty"`
 	MobileNumber         string `json:"mobile_number,omitempty"`
-	StreetNumber         int    `json:"street_number,omitempty"`
+	StreetNumber         string `json:"street_number,omitempty"`
 	StreetNumberAddition string `json:"street_number_addition,omitempty"`
 }
 
@@ -58,8 +59,8 @@ type OrderListOptions struct {
 	Direction string `url:"direction,omitempty"`
 }
 
-func (os *OrdersService) List(opts *OrderListOptions) (list *[]Order, res *Response, err error) {
-	res, err = os.client.get("wms/orders/", opts)
+func (os *OrdersService) List(ctx context.Context, opts *OrderListOptions) (list *[]Order, res *Response, err error) {
+	res, err = os.client.get(ctx, "wms/orders/", opts)
 	if err != nil {
 		return
 	}
@@ -71,8 +72,8 @@ func (os *OrdersService) List(opts *OrderListOptions) (list *[]Order, res *Respo
 	return
 }
 
-func (os *OrdersService) Get(orderID string) (order *Order, res *Response, err error) {
-	res, err = os.client.get(fmt.Sprintf("wms/orders/%s/", orderID), nil)
+func (os *OrdersService) Get(ctx context.Context, orderID string) (order *Order, res *Response, err error) {
+	res, err = os.client.get(ctx, fmt.Sprintf("wms/orders/%s/", orderID), nil)
 	if err != nil {
 		return
 	}
@@ -84,22 +85,8 @@ func (os *OrdersService) Get(orderID string) (order *Order, res *Response, err e
 	return
 }
 
-func (os *OrdersService) Create(ord Order) (order *Order, res *Response, err error) {
-	res, err = os.client.post("wms/orders/", ord, nil)
-
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(res.content, &order); err != nil {
-		return
-	}
-
-	return
-}
-
-func (os *OrdersService) Update(orderID string, ord Order) (order *Order, res *Response, err error) {
-	res, err = os.client.patch(fmt.Sprintf("wms/orders/%s/", orderID), ord, nil)
+func (os *OrdersService) Create(ctx context.Context, ord Order) (order *Order, res *Response, err error) {
+	res, err = os.client.post(ctx, "wms/orders/", ord, nil)
 
 	if err != nil {
 		return
@@ -112,8 +99,22 @@ func (os *OrdersService) Update(orderID string, ord Order) (order *Order, res *R
 	return
 }
 
-func (os *OrdersService) Cancel(orderID string) (order *Order, res *Response, err error) {
-	res, err = os.client.patch(fmt.Sprintf("wms/orders/%s/cancel", orderID), nil, nil)
+func (os *OrdersService) Update(ctx context.Context, orderID string, ord Order) (order *Order, res *Response, err error) {
+	res, err = os.client.patch(ctx, fmt.Sprintf("wms/orders/%s/", orderID), ord, nil)
+
+	if err != nil {
+		return
+	}
+
+	if err = json.Unmarshal(res.content, &order); err != nil {
+		return
+	}
+
+	return
+}
+
+func (os *OrdersService) Cancel(ctx context.Context, orderID string) (order *Order, res *Response, err error) {
+	res, err = os.client.patch(ctx, fmt.Sprintf("wms/orders/%s/cancel", orderID), nil, nil)
 	if err != nil {
 		return
 	}

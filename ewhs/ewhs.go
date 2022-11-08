@@ -2,25 +2,41 @@ package ewhs
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/google/go-querystring/query"
 	"io"
 	"net/http"
 	"net/url"
+	"runtime"
+	"strings"
+	"time"
 )
 
 const (
 	BaseURL            string = "https://eu.middleware.ewarehousing-solutions.com"
 	RequestContentType string = "application/json"
+	AuthHeader         string = "Authorization"
+	CustomerCodeHeader string = "X-Customer-Code"
+	WmsCodeHeader      string = "X-Wms-Code"
+)
+
+var (
+	errEmptyAuthKey = errors.New("you must provide a non-empty authentication key")
+	errBadBaseURL   = errors.New("malformed base url, it must contain a trailing slash")
 )
 
 // Client represents a client.
 type Client struct {
-	client  *http.Client
-	baseURL *url.URL
-	common  service
-	config  *Config
+	BaseURL   *url.URL
+	client    *http.Client
+	userAgent string
+	common    service
+	config    *Config
+
+	authToken string
 
 	// Services
 	Articles        *ArticlesService
@@ -37,13 +53,13 @@ type service struct {
 	client *Client
 }
 
-func (c *Client) get(uri string, options interface{}) (res *Response, err error) {
+func (c *Client) get(ctx context.Context, uri string, options interface{}) (res *Response, err error) {
 	if options != nil {
 		v, _ := query.Values(options)
 		uri = fmt.Sprintf("%s?%s", uri, v.Encode())
 	}
 
-	req, err := c.NewRequest(http.MethodGet, uri, nil)
+	req, err := c.NewRequest(ctx, http.MethodGet, uri, nil)
 	if err != nil {
 		return
 	}
@@ -51,13 +67,13 @@ func (c *Client) get(uri string, options interface{}) (res *Response, err error)
 	return c.Do(req)
 }
 
-func (c *Client) post(uri string, body interface{}, options interface{}) (res *Response, err error) {
+func (c *Client) post(ctx context.Context, uri string, body interface{}, options interface{}) (res *Response, err error) {
 	if options != nil {
 		v, _ := query.Values(options)
 		uri = fmt.Sprintf("%s?%s", uri, v.Encode())
 	}
 
-	req, err := c.NewRequest(http.MethodPost, uri, body)
+	req, err := c.NewRequest(ctx, http.MethodPost, uri, body)
 	if err != nil {
 		return
 	}
@@ -65,13 +81,13 @@ func (c *Client) post(uri string, body interface{}, options interface{}) (res *R
 	return c.Do(req)
 }
 
-func (c *Client) patch(uri string, body interface{}, options interface{}) (res *Response, err error) {
+func (c *Client) patch(ctx context.Context, uri string, body interface{}, options interface{}) (res *Response, err error) {
 	if options != nil {
 		v, _ := query.Values(options)
 		uri = fmt.Sprintf("%s?%s", uri, v.Encode())
 	}
 
-	req, err := c.NewRequest(http.MethodPatch, uri, body)
+	req, err := c.NewRequest(ctx, http.MethodPatch, uri, body)
 	if err != nil {
 		return
 	}
@@ -79,13 +95,13 @@ func (c *Client) patch(uri string, body interface{}, options interface{}) (res *
 	return c.Do(req)
 }
 
-func (c *Client) delete(uri string, options interface{}) (res *Response, err error) {
+func (c *Client) delete(ctx context.Context, uri string, options interface{}) (res *Response, err error) {
 	if options != nil {
 		v, _ := query.Values(options)
 		uri = fmt.Sprintf("%s?%s", uri, v.Encode())
 	}
 
-	req, err := c.NewRequest(http.MethodDelete, uri, nil)
+	req, err := c.NewRequest(ctx, http.MethodDelete, uri, nil)
 	if err != nil {
 		return
 	}
@@ -93,8 +109,46 @@ func (c *Client) delete(uri string, options interface{}) (res *Response, err err
 	return c.Do(req)
 }
 
-func (c *Client) NewRequest(method string, uri string, body interface{}) (req *http.Request, err error) {
-	u, err := c.baseURL.Parse(uri)
+// Authorize fetches a new access token based on login credentials
+func (c *Client) authorize(ctx context.Context) (res *Response, err error) {
+	req, err := c.NewRequest(ctx, http.MethodPost, "wms/auth/login/", nil)
+	if err != nil {
+		return
+	}
+
+	res, err = c.Do(req)
+
+	if err != nil {
+		return
+	}
+
+	authToken := AuthToken{}
+
+	if err = json.Unmarshal(res.content, &authToken); err != nil {
+		return
+	}
+
+	c.authToken = authToken.Token
+
+	return res, nil
+}
+
+func (c *Client) WithAuthToken(k string) error {
+	if k == "" {
+		return errEmptyAuthKey
+	}
+
+	c.authToken = strings.TrimSpace(k)
+
+	return nil
+}
+
+func (c *Client) NewRequest(ctx context.Context, method string, uri string, body interface{}) (req *http.Request, err error) {
+	if !strings.HasSuffix(c.BaseURL.Path, "/") {
+		return nil, errBadBaseURL
+	}
+
+	u, err := c.BaseURL.Parse(uri)
 	if err != nil {
 		return nil, err
 	}
@@ -110,13 +164,36 @@ func (c *Client) NewRequest(method string, uri string, body interface{}) (req *h
 		}
 	}
 
-	req, err = http.NewRequest(method, u.String(), buf)
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	req, err = http.NewRequestWithContext(ctx, method, u.String(), buf)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Set("Content-Type", RequestContentType)
 	req.Header.Set("Accept", RequestContentType)
+	req.Header.Set("Content-Type", RequestContentType)
+
+	if c.config != nil {
+		req.Header.Set(CustomerCodeHeader, c.config.CustomerCode)
+		req.Header.Set(WmsCodeHeader, c.config.WmsCode)
+	}
+
+	// TODO: allow expand headers
+	//if ctx.Value("Expand") != nil {
+	//}
+
+	// if no auth token is found -> authorize first
+	if c.authToken == "" && uri != "wms/auth/login/" {
+		_, err := c.authorize(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	req.Header.Add(AuthHeader, strings.Join([]string{"Bearer", c.authToken}, " "))
 
 	return req, nil
 }
@@ -144,20 +221,23 @@ func (c *Client) Do(req *http.Request) (*Response, error) {
 	return response, nil
 }
 
-func NewClient(baseClient *http.Client, c *Config) Client {
+func NewClient(baseClient *http.Client, c *Config) (ewhs *Client, err error) {
 	if baseClient == nil {
 		baseClient = http.DefaultClient
+		{
+			baseClient.Timeout = 30 * time.Second
+		}
 	}
 
 	u, _ := url.Parse(BaseURL)
 
-	ewhs := Client{
-		baseURL: u,
+	ewhs = &Client{
+		BaseURL: u,
 		client:  baseClient,
 		config:  c,
 	}
 
-	ewhs.common.client = &ewhs
+	ewhs.common.client = ewhs
 
 	// services for resources
 	ewhs.Articles = (*ArticlesService)(&ewhs.common)
@@ -169,29 +249,30 @@ func NewClient(baseClient *http.Client, c *Config) Client {
 	ewhs.Variants = (*VariantsService)(&ewhs.common)
 	ewhs.Webhooks = (*WebhooksService)(&ewhs.common)
 
-	return ewhs
+	ewhs.userAgent = strings.Join([]string{
+		runtime.GOOS,
+		runtime.GOARCH,
+		runtime.Version(),
+	}, ";")
+
+	return ewhs, nil
 }
 
-/*
-Error reports details on a failed API request.
-*/
-type Error struct {
-	Code     int       `json:"code"`
-	Message  string    `json:"message"`
-	Response *Response `json:"response"`
-}
+func newError(rsp *Response) error {
+	merr := &BaseError{}
 
-// Error function complies with the error interface
-func (e *Error) Error() string {
-	return fmt.Sprintf("response failed with status %v", e.Message)
-}
+	//if rsp.ContentLength > 0 {
+	//	err := json.Unmarshal(rsp.content, merr)
+	//	if err != nil {
+	//		return err
+	//	}
+	//} else {
+	merr.Status = rsp.StatusCode
+	merr.Title = rsp.Status
+	merr.Detail = string(rsp.content)
+	//}
 
-func newError(r *Response) *Error {
-	var e Error
-	e.Response = r
-	e.Code = r.StatusCode
-	e.Message = r.Status
-	return &e
+	return merr
 }
 
 type Response struct {

@@ -1,6 +1,7 @@
 package ewhs
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -30,8 +31,8 @@ type InboundListOptions struct {
 	Direction string `url:"direction,omitempty"`
 }
 
-func (is *InboundsService) List(opts *InboundListOptions) (list *[]Inbound, res *Response, err error) {
-	res, err = is.client.get("wms/inbounds/", opts)
+func (is *InboundsService) List(ctx context.Context, opts *InboundListOptions) (list *[]Inbound, res *Response, err error) {
+	res, err = is.client.get(ctx, "wms/inbounds/", opts)
 	if err != nil {
 		return
 	}
@@ -43,8 +44,8 @@ func (is *InboundsService) List(opts *InboundListOptions) (list *[]Inbound, res 
 	return
 }
 
-func (is *InboundsService) Get(inboundID string) (inbound *Inbound, res *Response, err error) {
-	res, err = is.client.get(fmt.Sprintf("wms/inbounds/%s/", inboundID), nil)
+func (is *InboundsService) Get(ctx context.Context, inboundID string) (inbound *Inbound, res *Response, err error) {
+	res, err = is.client.get(ctx, fmt.Sprintf("wms/inbounds/%s/", inboundID), nil)
 	if err != nil {
 		return
 	}
@@ -56,22 +57,8 @@ func (is *InboundsService) Get(inboundID string) (inbound *Inbound, res *Respons
 	return
 }
 
-func (is *InboundsService) Create(inb Inbound) (inbound *Inbound, res *Response, err error) {
-	res, err = is.client.post("wms/inbounds/", inb, nil)
-
-	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(res.content, &inbound); err != nil {
-		return
-	}
-
-	return
-}
-
-func (is *InboundsService) Update(inboundID string, inb Inbound) (inbound *Inbound, res *Response, err error) {
-	res, err = is.client.patch(fmt.Sprintf("wms/inbounds/%s/", inboundID), inb, nil)
+func (is *InboundsService) Create(ctx context.Context, inb Inbound) (inbound *Inbound, res *Response, err error) {
+	res, err = is.client.post(ctx, "wms/inbounds/", inb, nil)
 
 	if err != nil {
 		return
@@ -84,8 +71,22 @@ func (is *InboundsService) Update(inboundID string, inb Inbound) (inbound *Inbou
 	return
 }
 
-func (is *InboundsService) Cancel(inboundID string) (inbound *Inbound, res *Response, err error) {
-	res, err = is.client.patch(fmt.Sprintf("wms/inbounds/%s/cancel", inboundID), nil, nil)
+func (is *InboundsService) Update(ctx context.Context, inboundID string, inb Inbound) (inbound *Inbound, res *Response, err error) {
+	res, err = is.client.patch(ctx, fmt.Sprintf("wms/inbounds/%s/", inboundID), inb, nil)
+
+	if err != nil {
+		return
+	}
+
+	if err = json.Unmarshal(res.content, &inbound); err != nil {
+		return
+	}
+
+	return
+}
+
+func (is *InboundsService) Cancel(ctx context.Context, inboundID string) (inbound *Inbound, res *Response, err error) {
+	res, err = is.client.patch(ctx, fmt.Sprintf("wms/inbounds/%s/cancel", inboundID), nil, nil)
 	if err != nil {
 		return
 	}

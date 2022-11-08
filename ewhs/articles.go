@@ -1,6 +1,7 @@
 package ewhs
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -35,8 +36,8 @@ type ArticleListOptions struct {
 	Direction string `url:"direction,omitempty"`
 }
 
-func (as *ArticlesService) List(opts *ArticleListOptions) (list *[]Article, res *Response, err error) {
-	res, err = as.client.get("wms/articles/", opts)
+func (as *ArticlesService) List(ctx context.Context, opts *ArticleListOptions) (list *[]Article, res *Response, err error) {
+	res, err = as.client.get(ctx, "wms/articles/", opts)
 	if err != nil {
 		return
 	}
@@ -48,8 +49,8 @@ func (as *ArticlesService) List(opts *ArticleListOptions) (list *[]Article, res 
 	return
 }
 
-func (as *ArticlesService) Get(articleID string) (article *Article, res *Response, err error) {
-	res, err = as.client.get(fmt.Sprintf("wms/articles/%s/", articleID), nil)
+func (as *ArticlesService) Get(ctx context.Context, articleID string) (article *Article, res *Response, err error) {
+	res, err = as.client.get(ctx, fmt.Sprintf("wms/articles/%s/", articleID), nil)
 	if err != nil {
 		return
 	}
@@ -61,8 +62,8 @@ func (as *ArticlesService) Get(articleID string) (article *Article, res *Respons
 	return
 }
 
-func (as *ArticlesService) Create(art Article) (article *Article, res *Response, err error) {
-	res, err = as.client.post("wms/articles/", art, nil)
+func (as *ArticlesService) Create(ctx context.Context, art Article) (article *Article, res *Response, err error) {
+	res, err = as.client.post(ctx, "wms/articles/", art, nil)
 
 	if err != nil {
 		return
@@ -75,8 +76,8 @@ func (as *ArticlesService) Create(art Article) (article *Article, res *Response,
 	return
 }
 
-func (as *ArticlesService) Update(articleID string, art Article) (article *Article, res *Response, err error) {
-	res, err = as.client.patch(fmt.Sprintf("wms/articles/%s/", articleID), art, nil)
+func (as *ArticlesService) Update(ctx context.Context, articleID string, art Article) (article *Article, res *Response, err error) {
+	res, err = as.client.patch(ctx, fmt.Sprintf("wms/articles/%s/", articleID), art, nil)
 
 	if err != nil {
 		return
