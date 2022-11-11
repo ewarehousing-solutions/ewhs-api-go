@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	BaseURL            string = "https://eu.middleware.ewarehousing-solutions.com"
+	BaseURL            string = "https://eu.middleware.ewarehousing-solutions.com/"
 	RequestContentType string = "application/json"
 	AuthHeader         string = "Authorization"
 	CustomerCodeHeader string = "X-Customer-Code"
