@@ -20,12 +20,18 @@ go get -u github.com/ewarehousing-solutions/ewhs-api-go
 ## Usage
 
 ```go
-config := ewhs.NewConfig("username", "password", "wms_code", "customer_code")
+config := ewhs.NewConfig("username", "password", "wms_code", "customer_code", false)
 client, err := ewhs.NewClient(nil, config)
 if err != nil {
 log.Fatal(err)
 }
 ```
+
+If you want to use the testing API, set the `testing` parameter to true
+```go
+config := ewhs.NewConfig("username", "password", "wms_code", "customer_code", true)
+```
+
 
 ## Support
 

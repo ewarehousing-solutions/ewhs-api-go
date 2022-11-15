@@ -31,7 +31,7 @@ func setup() {
 	tMux = http.NewServeMux()
 	tServer = httptest.NewServer(tMux)
 
-	tConf = NewConfig("test_username", "test_password", "test_wms", "test_customer")
+	tConf = NewConfig("test_username", "test_password", "test_wms", "test_customer", true)
 	tClient, _ = NewClient(nil, tConf)
 
 	u, _ := url.Parse(tServer.URL + "/")
@@ -179,7 +179,7 @@ func TestClient_Authorize(t *testing.T) {
 		},
 	}
 
-	conf := NewConfig("test_username", "test_password", "test_wms", "test_customer")
+	conf := NewConfig("test_username", "test_password", "test_wms", "test_customer", true)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

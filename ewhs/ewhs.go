@@ -16,7 +16,9 @@ import (
 )
 
 const (
-	BaseURL            string = "https://eu.middleware.ewarehousing-solutions.com/"
+	BaseURL     string = "https://eu.middleware.ewarehousing-solutions.com/"
+	TestBaseURL string = "https://eu-dev.middleware.ewarehousing-solutions.com/"
+
 	RequestContentType string = "application/json"
 	AuthHeader         string = "Authorization"
 	CustomerCodeHeader string = "X-Customer-Code"
@@ -229,7 +231,13 @@ func NewClient(baseClient *http.Client, c *Config) (ewhs *Client, err error) {
 		}
 	}
 
-	u, _ := url.Parse(BaseURL)
+	bURL := BaseURL
+
+	if c.Testing == true {
+		bURL = TestBaseURL
+	}
+
+	u, _ := url.Parse(bURL)
 
 	ewhs = &Client{
 		BaseURL: u,
