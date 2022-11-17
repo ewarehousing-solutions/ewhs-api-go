@@ -26,8 +26,12 @@ const (
 )
 
 var (
-	errEmptyAuthKey = errors.New("you must provide a non-empty authentication key")
-	errBadBaseURL   = errors.New("malformed base url, it must contain a trailing slash")
+	errEmptyAuthKey        = errors.New("you must provide a non-empty authentication key")
+	errBadBaseURL          = errors.New("malformed base url, it must contain a trailing slash")
+	errMissingConfig       = errors.New("no config configured")
+	errMissingCredentials  = errors.New("no username or password configured")
+	errMissingWmsCode      = errors.New("no wms code configured")
+	errMissingCustomerCode = errors.New("no customer code configured")
 )
 
 // Client represents a client.
@@ -53,6 +57,11 @@ type Client struct {
 
 type service struct {
 	client *Client
+}
+
+type Auth struct {
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
 }
 
 func (c *Client) get(ctx context.Context, uri string, options interface{}) (res *Response, err error) {
@@ -113,7 +122,18 @@ func (c *Client) delete(ctx context.Context, uri string, options interface{}) (r
 
 // Authorize fetches a new access token based on login credentials
 func (c *Client) authorize(ctx context.Context) (res *Response, err error) {
-	req, err := c.NewRequest(ctx, http.MethodPost, "wms/auth/login/", nil)
+	if c.config.Username == "" || c.config.Password == "" {
+		return nil, errMissingCredentials
+	}
+
+	req, err := c.NewRequest(ctx, http.MethodPost, "wms/auth/login/", Auth{
+		Username: c.config.Username,
+		Password: c.config.Password,
+	})
+
+	if err != nil {
+		return
+	}
 
 	req.Header.Set("Accept", RequestContentType)
 	req.Header.Set("Content-Type", RequestContentType)
@@ -121,10 +141,6 @@ func (c *Client) authorize(ctx context.Context) (res *Response, err error) {
 	if c.config != nil {
 		req.Header.Set(CustomerCodeHeader, c.config.CustomerCode)
 		req.Header.Set(WmsCodeHeader, c.config.WmsCode)
-	}
-
-	if err != nil {
-		return
 	}
 
 	res, err = c.Do(req)
@@ -159,6 +175,22 @@ func (c *Client) NewRequest(ctx context.Context, method string, uri string, body
 		return nil, errBadBaseURL
 	}
 
+	if c.config == nil {
+		return nil, errMissingConfig
+	}
+
+	if c.config.WmsCode == "" {
+		return nil, errMissingWmsCode
+	}
+
+	if c.config.CustomerCode == "" {
+		return nil, errMissingCustomerCode
+	}
+
+	if !strings.HasSuffix(c.BaseURL.Path, "/") {
+		return nil, errBadBaseURL
+	}
+
 	u, err := c.BaseURL.Parse(uri)
 	if err != nil {
 		return nil, err
@@ -187,10 +219,8 @@ func (c *Client) NewRequest(ctx context.Context, method string, uri string, body
 	req.Header.Set("Accept", RequestContentType)
 	req.Header.Set("Content-Type", RequestContentType)
 
-	if c.config != nil {
-		req.Header.Set(CustomerCodeHeader, c.config.CustomerCode)
-		req.Header.Set(WmsCodeHeader, c.config.WmsCode)
-	}
+	req.Header.Set(CustomerCodeHeader, c.config.CustomerCode)
+	req.Header.Set(WmsCodeHeader, c.config.WmsCode)
 
 	// TODO: allow expand headers
 	//if ctx.Value("Expand") != nil {
