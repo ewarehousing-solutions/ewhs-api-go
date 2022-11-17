@@ -121,7 +121,7 @@ func (c *Client) authorize(ctx context.Context) (res *Response, err error) {
 	res, err = c.Do(req)
 
 	if err != nil {
-		return
+		return res, err
 	}
 
 	authToken := AuthToken{}
