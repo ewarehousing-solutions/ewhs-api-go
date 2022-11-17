@@ -114,6 +114,15 @@ func (c *Client) delete(ctx context.Context, uri string, options interface{}) (r
 // Authorize fetches a new access token based on login credentials
 func (c *Client) authorize(ctx context.Context) (res *Response, err error) {
 	req, err := c.NewRequest(ctx, http.MethodPost, "wms/auth/login/", nil)
+
+	req.Header.Set("Accept", RequestContentType)
+	req.Header.Set("Content-Type", RequestContentType)
+
+	if c.config != nil {
+		req.Header.Set(CustomerCodeHeader, c.config.CustomerCode)
+		req.Header.Set(WmsCodeHeader, c.config.WmsCode)
+	}
+
 	if err != nil {
 		return
 	}
