@@ -16,6 +16,7 @@ import (
 )
 
 const (
+	Version     string = "0.1.7"
 	BaseURL     string = "https://eu.middleware.ewarehousing-solutions.com/"
 	TestBaseURL string = "https://eu-dev.middleware.ewarehousing-solutions.com/"
 
@@ -216,6 +217,8 @@ func (c *Client) NewRequest(ctx context.Context, method string, uri string, body
 		return nil, err
 	}
 
+	req.Header.Set("User-Agent", c.userAgent)
+
 	req.Header.Set("Accept", RequestContentType)
 	req.Header.Set("Content-Type", RequestContentType)
 
@@ -296,11 +299,17 @@ func NewClient(baseClient *http.Client, c *Config) (ewhs *Client, err error) {
 	ewhs.Variants = (*VariantsService)(&ewhs.common)
 	ewhs.Webhooks = (*WebhooksService)(&ewhs.common)
 
+	ewhsUserAgentString := strings.Join([]string{
+		"Ewarehousing",
+		Version,
+	}, "/")
+
+	goUserAgentString := strings.Replace(runtime.Version(), "go", "go/", -1)
+
 	ewhs.userAgent = strings.Join([]string{
-		runtime.GOOS,
-		runtime.GOARCH,
-		runtime.Version(),
-	}, ";")
+		ewhsUserAgentString,
+		goUserAgentString,
+	}, " ")
 
 	return ewhs, nil
 }
