@@ -65,6 +65,10 @@ func (os *OrdersService) List(ctx context.Context, opts *OrderListOptions) (list
 		return
 	}
 
+	if len(res.content) == 0 {
+		return
+	}
+
 	if err = json.Unmarshal(res.content, &list); err != nil {
 		return
 	}

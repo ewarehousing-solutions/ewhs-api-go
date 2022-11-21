@@ -16,7 +16,7 @@ type Webhook struct {
 }
 
 func (ws *WebhooksService) List(ctx context.Context) (list *[]Webhook, res *Response, err error) {
-	res, err = ws.client.get(ctx, "wms/webhooks/", nil)
+	res, err = ws.client.get(ctx, "webhooks/", nil)
 	if err != nil {
 		return
 	}

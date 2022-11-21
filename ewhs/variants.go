@@ -39,6 +39,10 @@ func (vs *VariantsService) List(ctx context.Context, opts *VariantListOptions) (
 		return
 	}
 
+	if len(res.content) == 0 {
+		return
+	}
+
 	if err = json.Unmarshal(res.content, &list); err != nil {
 		return
 	}

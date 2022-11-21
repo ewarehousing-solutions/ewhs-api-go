@@ -32,6 +32,10 @@ func (ss *ShipmentsService) List(ctx context.Context, opts *ShipmentListOptions)
 		return
 	}
 
+	if len(res.content) == 0 {
+		return
+	}
+
 	if err = json.Unmarshal(res.content, &list); err != nil {
 		return
 	}
