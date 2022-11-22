@@ -17,19 +17,32 @@ go get -u github.com/ewarehousing-solutions/ewhs-api-go
 
 - Go 19+
 
+
 ## Usage
+
+### Client setup
 
 ```go
 config := ewhs.NewConfig("username", "password", "wms_code", "customer_code", false)
 client, err := ewhs.NewClient(nil, config)
 if err != nil {
-log.Fatal(err)
+    log.Fatal(err)
 }
 ```
 
 If you want to use the testing API, set the `testing` parameter to true
 ```go
 config := ewhs.NewConfig("username", "password", "wms_code", "customer_code", true)
+```
+
+
+### Webhook verification
+The package provides a helper which can be used to easily verify the webhooks
+```go
+func ValidateWebhook(httpRequest *http.Request) bool {
+    secret := "super-secret-password"
+    return VerifyWebhookRequest(httpRequest, secret)
+}
 ```
 
 
