@@ -9,6 +9,7 @@ import (
 type OrdersService service
 
 type Order struct {
+	ID                    string          `json:"id,omitempty"`
 	ExternalReference     string          `json:"external_reference,omitempty"`
 	ShippingContactperson string          `json:"shipping_contactperson,omitempty"`
 	RequestedDeliveryDate string          `json:"requested_delivery_date,omitempty"`

@@ -9,6 +9,7 @@ import (
 type ArticlesService service
 
 type Article struct {
+	ID       string           `json:"id,omitempty"`
 	Name     string           `json:"name,omitempty"`
 	Variants []ArticleVariant `json:"variants,omitempty"`
 }

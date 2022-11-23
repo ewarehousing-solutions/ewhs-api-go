@@ -9,6 +9,7 @@ import (
 type WebhooksService service
 
 type Webhook struct {
+	ID         string `json:"id,omitempty"`
 	URL        string `json:"url,omitempty"`
 	Group      string `json:"group,omitempty"`
 	Action     string `json:"action,omitempty"`
