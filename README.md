@@ -35,6 +35,15 @@ If you want to use the testing API, set the `testing` parameter to true
 config := ewhs.NewConfig("username", "password", "wms_code", "customer_code", true)
 ```
 
+### Filtering
+Collection routes allow query parameters to filter the dataset. Query params can be added using the corresponding `ListOptions{}` type. For example, if you want to search for a specific order reference:
+```go
+options := &ewhs.OrderListOptions{
+	Reference: "SEARCH_REFERENCE",
+}
+orders, res, err := client.Orders.List(context.Background(), options)
+```
+
 
 ### Webhook verification
 The package provides a helper which can be used to easily verify the webhooks
