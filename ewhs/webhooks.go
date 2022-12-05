@@ -8,6 +8,13 @@ import (
 
 type WebhooksService service
 
+type WebhookResults struct {
+	Count    int         `json:"count,omitempty"`
+	Next     interface{} `json:"next,omitempty"`
+	Previous interface{} `json:"previous,omitempty"`
+	Results  []Webhook   `json:"results,omitempty"`
+}
+
 type Webhook struct {
 	ID         string `json:"id,omitempty"`
 	URL        string `json:"url,omitempty"`
@@ -22,11 +29,13 @@ func (ws *WebhooksService) List(ctx context.Context) (list *[]Webhook, res *Resp
 		return
 	}
 
-	if err = json.Unmarshal(res.content, &list); err != nil {
+	var i WebhookResults
+
+	if err = json.Unmarshal(res.content, &i); err != nil {
 		return
 	}
 
-	return
+	return &i.Results, nil, nil
 }
 
 func (ws *WebhooksService) Get(ctx context.Context, webhookID string) (webhook *Webhook, res *Response, err error) {
