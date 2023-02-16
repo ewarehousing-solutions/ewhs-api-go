@@ -13,6 +13,7 @@ type Shipment struct {
 	ID                        string                 `json:"id,omitempty"`
 	Customer                  string                 `json:"customer,omitempty"`
 	CreatedAt                 time.Time              `json:"created_at,omitempty"`
+	OrderID                   string                 `json:"order_id,omitempty"`
 	OrderExternalReference    string                 `json:"order_external_reference,omitempty"`
 	ShipmentExternalReference interface{}            `json:"shipment_external_reference,omitempty"`
 	Reference                 string                 `json:"reference,omitempty"`
