@@ -7,14 +7,19 @@ import (
 
 type GdprService service
 
-type Request struct {
+type RequestPersonData struct {
 	Email string `json:"email,omitempty"`
 }
+
+type RedactPersonData struct {
+	Email string `json:"email,omitempty"`
+}
+
 type Message struct {
 	Message string `json:"message,omitempty"`
 }
 
-func (gs *GdprService) RequestPersonData(ctx context.Context, req Request) (message *Message, res *Response, err error) {
+func (gs *GdprService) RequestPersonData(ctx context.Context, req RequestPersonData) (message *Message, res *Response, err error) {
 	res, err = gs.client.post(ctx, "wms/gdpr/request-person-data/", req, nil)
 
 	if err != nil {
@@ -28,7 +33,7 @@ func (gs *GdprService) RequestPersonData(ctx context.Context, req Request) (mess
 	return
 }
 
-func (gs *GdprService) RedactPersonData(ctx context.Context, req Request) (message *Message, res *Response, err error) {
+func (gs *GdprService) RedactPersonData(ctx context.Context, req RedactPersonData) (message *Message, res *Response, err error) {
 	res, err = gs.client.post(ctx, "wms/gdpr/redact-person-data/", req, nil)
 
 	if err != nil {
