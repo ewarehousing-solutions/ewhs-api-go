@@ -18,6 +18,7 @@ type Order struct {
 	ShippingEmail         string          `json:"shipping_email,omitempty"`
 	ShippingMethod        string          `json:"shipping_method,omitempty"`
 	Note                  string          `json:"note,omitempty"`
+	Currency              string          `json:"currency,omitempty"`
 	Documents             []Document      `json:"documents,omitempty"`
 	OrderLines            []OrderLine     `json:"order_lines,omitempty"`
 	ShippingAddress       ShippingAddress `json:"shipping_address,omitempty"`
