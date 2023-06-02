@@ -89,13 +89,9 @@ func (is *InboundsService) Update(ctx context.Context, inboundID string, inb Inb
 	return
 }
 
-func (is *InboundsService) Cancel(ctx context.Context, inboundID string) (inbound *Inbound, res *Response, err error) {
+func (is *InboundsService) Cancel(ctx context.Context, inboundID string) (res *Response, err error) {
 	res, err = is.client.patch(ctx, fmt.Sprintf("wms/inbounds/%s/cancel/", inboundID), nil, nil)
 	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(res.content, &inbound); err != nil {
 		return
 	}
 

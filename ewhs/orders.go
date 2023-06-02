@@ -121,13 +121,9 @@ func (os *OrdersService) Update(ctx context.Context, orderID string, ord Order) 
 	return
 }
 
-func (os *OrdersService) Cancel(ctx context.Context, orderID string) (order *Order, res *Response, err error) {
+func (os *OrdersService) Cancel(ctx context.Context, orderID string) (res *Response, err error) {
 	res, err = os.client.patch(ctx, fmt.Sprintf("wms/orders/%s/cancel/", orderID), nil, nil)
 	if err != nil {
-		return
-	}
-
-	if err = json.Unmarshal(res.content, &order); err != nil {
 		return
 	}
 
