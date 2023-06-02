@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	Version     string = "0.1.7"
+	Version     string = "0.2.3"
 	BaseURL     string = "https://eu.middleware.ewarehousing-solutions.com/"
 	TestBaseURL string = "https://eu-dev.middleware.ewarehousing-solutions.com/"
 

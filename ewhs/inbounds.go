@@ -90,7 +90,7 @@ func (is *InboundsService) Update(ctx context.Context, inboundID string, inb Inb
 }
 
 func (is *InboundsService) Cancel(ctx context.Context, inboundID string) (inbound *Inbound, res *Response, err error) {
-	res, err = is.client.patch(ctx, fmt.Sprintf("wms/inbounds/%s/cancel", inboundID), nil, nil)
+	res, err = is.client.patch(ctx, fmt.Sprintf("wms/inbounds/%s/cancel/", inboundID), nil, nil)
 	if err != nil {
 		return
 	}

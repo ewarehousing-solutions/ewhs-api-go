@@ -122,7 +122,7 @@ func (os *OrdersService) Update(ctx context.Context, orderID string, ord Order) 
 }
 
 func (os *OrdersService) Cancel(ctx context.Context, orderID string) (order *Order, res *Response, err error) {
-	res, err = os.client.patch(ctx, fmt.Sprintf("wms/orders/%s/cancel", orderID), nil, nil)
+	res, err = os.client.patch(ctx, fmt.Sprintf("wms/orders/%s/cancel/", orderID), nil, nil)
 	if err != nil {
 		return
 	}
