@@ -59,7 +59,7 @@ Many objects allow you to request additional information as an expanded response
 ```go
 ctx := context.Background()
 
-order, res, err := client.Orders.Get(context.WithValue(ctx, "Expand", "order_lines"))
+order, res, err := client.Orders.Get(context.WithValue(ctx, "Expand", "order_lines")) // Comma seperated value -> order_lines,shipping_method,etc
 ```
 
 ## Support
