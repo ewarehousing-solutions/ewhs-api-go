@@ -226,9 +226,9 @@ func (c *Client) NewRequest(ctx context.Context, method string, uri string, body
 	req.Header.Set(CustomerCodeHeader, c.config.CustomerCode)
 	req.Header.Set(WmsCodeHeader, c.config.WmsCode)
 
-	// TODO: allow expand headers
-	//if ctx.Value("Expand") != nil {
-	//}
+	if expand := ctx.Value("Expand"); expand != nil {
+		req.Header.Set("Expand", expand.(string))
+	}
 
 	// if no auth token is found -> authorize first
 	if c.authToken == "" && uri != "wms/auth/login/" {
