@@ -54,6 +54,13 @@ func ValidateWebhook(httpRequest *http.Request) bool {
 }
 ```
 
+### Expanding responses
+Many objects allow you to request additional information as an expanded response by using the expand header. This parameter is available on all API requests, and applies to the response of that request only. Checkout the [documentation](https://api.docs.ewarehousing-solutions.com/expanding-responses) for all possible options.
+```go
+ctx := context.Background()
+
+order, res, err := client.Orders.Get(context.WithValue(ctx, "Expand", "order_lines")) // Comma seperated value -> order_lines,shipping_method,etc
+```
 
 ## Support
 
