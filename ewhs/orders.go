@@ -9,20 +9,21 @@ import (
 type OrdersService service
 
 type Order struct {
-	ID                    string          `json:"id,omitempty"`
-	ExternalID            string          `json:"external_id,omitempty"`
-	ExternalReference     string          `json:"external_reference,omitempty"`
-	ShippingContactperson string          `json:"shipping_contactperson,omitempty"`
-	RequestedDeliveryDate string          `json:"requested_delivery_date,omitempty"`
-	CustomerNote          string          `json:"customer_note,omitempty"`
-	ShippingEmail         string          `json:"shipping_email,omitempty"`
-	ShippingMethod        string          `json:"shipping_method,omitempty"`
-	Note                  string          `json:"note,omitempty"`
-	Currency              string          `json:"currency,omitempty"`
-	OrderAmount           int64           `json:"order_amount,omitempty"`
-	Documents             []Document      `json:"documents,omitempty"`
-	OrderLines            []OrderLine     `json:"order_lines,omitempty"`
-	ShippingAddress       ShippingAddress `json:"shipping_address,omitempty"`
+	ID                    string            `json:"id,omitempty"`
+	ExternalID            string            `json:"external_id,omitempty"`
+	ExternalReference     string            `json:"external_reference,omitempty"`
+	ShippingContactperson string            `json:"shipping_contactperson,omitempty"`
+	RequestedDeliveryDate string            `json:"requested_delivery_date,omitempty"`
+	CustomerNote          string            `json:"customer_note,omitempty"`
+	ShippingEmail         string            `json:"shipping_email,omitempty"`
+	ShippingMethod        string            `json:"shipping_method,omitempty"`
+	Note                  string            `json:"note,omitempty"`
+	Currency              string            `json:"currency,omitempty"`
+	OrderAmount           int64             `json:"order_amount,omitempty"`
+	Documents             []Document        `json:"documents,omitempty"`
+	OrderLines            []OrderLine       `json:"order_lines,omitempty"`
+	ShippingAddress       ShippingAddress   `json:"shipping_address,omitempty"`
+	MetaData              map[string]string `json:"meta_data,omitempty"`
 }
 type Document struct {
 	ShippingLabel bool   `json:"shipping_label,omitempty"`
