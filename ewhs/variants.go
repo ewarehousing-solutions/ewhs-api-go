@@ -16,10 +16,10 @@ type Variant struct {
 	Ean                string  `json:"ean,omitempty"`
 	Sku                string  `json:"sku,omitempty"`
 	HsTariffCode       string  `json:"hs_tariff_code,omitempty"`
-	Height             string  `json:"height,omitempty"`
-	Depth              string  `json:"depth,omitempty"`
-	Width              string  `json:"width,omitempty"`
-	Weight             string  `json:"weight,omitempty"`
+	Height             int64   `json:"height,omitempty"`
+	Depth              int64   `json:"depth,omitempty"`
+	Width              int64   `json:"width,omitempty"`
+	Weight             int64   `json:"weight,omitempty"`
 	Expirable          bool    `json:"expirable,omitempty"`
 	CountryOfOrigin    string  `json:"country_of_origin,omitempty"`
 	UsingSerialNumbers bool    `json:"using_serial_numbers,omitempty"`
