@@ -51,6 +51,7 @@ type ShipmentListOptions struct {
 	To                     string `url:"to,omitempty"`
 	Limit                  int    `url:"limit,omitempty"`
 	Direction              string `url:"direction,omitempty"`
+	Page                   int    `url:"page,omitempty"`
 }
 
 func (ss *ShipmentsService) List(ctx context.Context, opts *ShipmentListOptions) (list *[]Shipment, res *Response, err error) {
