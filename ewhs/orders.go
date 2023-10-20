@@ -54,14 +54,16 @@ type ShippingAddress struct {
 }
 
 type OrderListOptions struct {
-	Reference string `url:"reference,omitempty"`
-	Status    string `url:"status,omitempty"`
-	Page      int    `url:"page,omitempty"`
-	From      string `url:"from,omitempty"`
-	To        string `url:"to,omitempty"`
-	Limit     int    `url:"limit,omitempty"`
-	Sort      string `url:"sort,omitempty"`
-	Direction string `url:"direction,omitempty"`
+	Reference         string `url:"reference,omitempty"`
+	Status            string `url:"status,omitempty"`
+	Page              int    `url:"page,omitempty"`
+	From              string `url:"from,omitempty"`
+	To                string `url:"to,omitempty"`
+	Limit             int    `url:"limit,omitempty"`
+	Sort              string `url:"sort,omitempty"`
+	Direction         string `url:"direction,omitempty"`
+	ExternalReference string `url:"external_reference"`
+	ExternalID        string `url:"external_id"`
 }
 
 func (os *OrdersService) List(ctx context.Context, opts *OrderListOptions) (list *[]Order, res *Response, err error) {
