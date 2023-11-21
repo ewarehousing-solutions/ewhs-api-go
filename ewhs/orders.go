@@ -62,8 +62,8 @@ type OrderListOptions struct {
 	Limit             int    `url:"limit,omitempty"`
 	Sort              string `url:"sort,omitempty"`
 	Direction         string `url:"direction,omitempty"`
-	ExternalReference string `url:"external_reference"`
-	ExternalID        string `url:"external_id"`
+	ExternalReference string `url:"external_reference,omitempty"`
+	ExternalID        string `url:"external_id,omitempty"`
 }
 
 func (os *OrdersService) List(ctx context.Context, opts *OrderListOptions) (list *[]Order, res *Response, err error) {
