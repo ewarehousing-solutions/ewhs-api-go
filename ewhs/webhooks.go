@@ -79,7 +79,7 @@ func (ws *WebhooksService) Update(ctx context.Context, webhookID string, wh Webh
 	return
 }
 
-func (os *OrdersService) Delete(ctx context.Context, webhookID string) (webhook *Webhook, res *Response, err error) {
+func (os *WebhooksService) Delete(ctx context.Context, webhookID string) (webhook *Webhook, res *Response, err error) {
 	res, err = os.client.delete(ctx, fmt.Sprintf("webhooks/%s/", webhookID), nil)
 	if err != nil {
 		return
