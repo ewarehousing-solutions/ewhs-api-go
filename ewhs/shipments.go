@@ -46,7 +46,7 @@ type ShipmentLines struct {
 }
 
 type ShipmentListOptions struct {
-	OrderExternalReference []string `url:"order_external_reference,omitempty"`
+	OrderExternalReference []string `url:"order_external_reference[],omitempty"`
 	From                   string   `url:"from,omitempty"`
 	To                     string   `url:"to,omitempty"`
 	Limit                  int      `url:"limit,omitempty"`
