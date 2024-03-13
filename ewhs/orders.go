@@ -24,6 +24,7 @@ type Order struct {
 	OrderLines            []OrderLine       `json:"order_lines,omitempty"`
 	ShippingAddress       ShippingAddress   `json:"shipping_address,omitempty"`
 	MetaData              map[string]string `json:"meta_data,omitempty"`
+	Status                string            `json:"status,omitempty"`
 }
 type Document struct {
 	ShippingLabel bool   `json:"shipping_label,omitempty"`
