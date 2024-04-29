@@ -85,9 +85,5 @@ func (os *WebhooksService) Delete(ctx context.Context, webhookID string) (webhoo
 		return
 	}
 
-	if err = json.Unmarshal(res.content, &webhook); err != nil {
-		return
-	}
-
 	return
 }
