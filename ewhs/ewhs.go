@@ -122,7 +122,7 @@ func (c *Client) delete(ctx context.Context, uri string, options interface{}) (r
 	return c.Do(req)
 }
 
-// Authorize fetches a new access token based on login credentials
+// Authorize fetches a new access token based on login credentials.
 func (c *Client) authorize(ctx context.Context) (res *Response, err error) {
 	if c.config.Username == "" || c.config.Password == "" {
 		return nil, errMissingCredentials
