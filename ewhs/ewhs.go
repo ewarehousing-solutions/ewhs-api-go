@@ -266,7 +266,7 @@ func (c *Client) Do(req *http.Request) (*Response, error) {
 	return response, nil
 }
 
-func NewClient(baseClient *http.Client, c *Config) (ewhs *Client, err error) {
+func NewClient(baseClient *http.Client, c *Config, localUrl string) (ewhs *Client, err error) {
 	if baseClient == nil {
 		baseClient = http.DefaultClient
 		{
@@ -278,6 +278,10 @@ func NewClient(baseClient *http.Client, c *Config) (ewhs *Client, err error) {
 
 	if c.Testing == true {
 		bURL = TestBaseURL
+	}
+
+	if localUrl != "" {
+		bURL = localUrl
 	}
 
 	u, _ := url.Parse(bURL)
