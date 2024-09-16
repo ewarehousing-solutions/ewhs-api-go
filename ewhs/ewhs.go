@@ -51,6 +51,7 @@ type Client struct {
 	Inbounds        *InboundsService
 	Orders          *OrdersService
 	Stock           *StockService
+	Gdpr            *GdprService
 	Shipments       *ShipmentsService
 	ShippingMethods *ShippingMethodsService
 	Variants        *VariantsService
@@ -296,6 +297,7 @@ func NewClient(baseClient *http.Client, c *Config) (ewhs *Client, err error) {
 	ewhs.Inbounds = (*InboundsService)(&ewhs.common)
 	ewhs.Orders = (*OrdersService)(&ewhs.common)
 	ewhs.Stock = (*StockService)(&ewhs.common)
+	ewhs.Gdpr = (*GdprService)(&ewhs.common)
 	ewhs.Shipments = (*ShipmentsService)(&ewhs.common)
 	ewhs.ShippingMethods = (*ShippingMethodsService)(&ewhs.common)
 	ewhs.Variants = (*VariantsService)(&ewhs.common)
