@@ -1,8 +1,6 @@
 package ewhs
 
 import (
-	"github.com/ewarehousing-solutions/ewhs-api-go/test/testdata"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +8,9 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/ewarehousing-solutions/ewhs-api-go/test/testdata"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -31,7 +32,7 @@ func setup() {
 	tMux = http.NewServeMux()
 	tServer = httptest.NewServer(tMux)
 
-	tConf = NewConfig("test_username", "test_password", "test_wms", "test_customer", true)
+	tConf = NewConfig("test_username", "test_password", "test_wms", "test_customer", true, "test_domain", "test_app", "test_version")
 	tClient, _ = NewClient(nil, tConf)
 
 	u, _ := url.Parse(tServer.URL + "/")
@@ -97,7 +98,7 @@ func TestNewClient(t *testing.T) {
 		},
 	}
 
-	conf := NewConfig("test_username", "test_password", "test_wms", "test_customer", true)
+	conf := NewConfig("test_username", "test_password", "test_wms", "test_customer", true, "test_domain", "test_app", "test_version")
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -179,8 +180,7 @@ func TestClient_Authorize(t *testing.T) {
 		},
 	}
 
-	conf := NewConfig("test_username", "test_password", "test_wms", "test_customer", true)
-
+	conf := NewConfig("test_username", "test_password", "test_wms", "test_customer", true, "test_domain", "test_app", "test_version")
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := NewClient(tt.client, conf)

@@ -6,17 +6,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/google/go-querystring/query"
 	"io"
 	"net/http"
 	"net/url"
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/google/go-querystring/query"
 )
 
 const (
-	Version     string = "0.2.4"
+	Version     string = "1.0.4"
 	BaseURL     string = "https://eu.middleware.ewarehousing-solutions.com/"
 	TestBaseURL string = "https://eu-dev.middleware.ewarehousing-solutions.com/"
 
@@ -302,15 +303,24 @@ func NewClient(baseClient *http.Client, c *Config) (ewhs *Client, err error) {
 	ewhs.Webhooks = (*WebhooksService)(&ewhs.common)
 
 	ewhsUserAgentString := strings.Join([]string{
-		"Ewarehousing",
+		"ewhs-api-go",
 		Version,
 	}, "/")
 
 	goUserAgentString := strings.Replace(runtime.Version(), "go", "go/", -1)
 
+	appUserAgentString := strings.Join([]string{
+		c.App,
+		c.AppVersion,
+	}, "/")
+
+	domain := "(" + c.Domain + ")"
+
 	ewhs.userAgent = strings.Join([]string{
 		ewhsUserAgentString,
 		goUserAgentString,
+		appUserAgentString,
+		domain,
 	}, " ")
 
 	return ewhs, nil
