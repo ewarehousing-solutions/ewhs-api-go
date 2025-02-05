@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	Version     string = "1.0.4"
+	Version     string = "1.0.5"
 	BaseURL     string = "https://eu.middleware.ewarehousing-solutions.com/"
 	TestBaseURL string = "https://eu-dev.middleware.ewarehousing-solutions.com/"
 
@@ -317,12 +317,12 @@ func NewClient(baseClient *http.Client, c *Config) (ewhs *Client, err error) {
 	return ewhs, nil
 }
 
-func AddUserAgentString(ewhsClient *Client, addition string)(ewhs *Client) {
-	ewhsClient.userAgent = strings.Join([]string{
-		ewhsClient.userAgent,
-		addition,
+func (c *Client) AddUserAgentString(s string) (*Client) {
+	c.userAgent = strings.Join([]string{
+		c.userAgent,
+		s,
 	}, " ")
-	return ewhsClient
+	return c
 }
 
 func newError(rsp *Response) error {
