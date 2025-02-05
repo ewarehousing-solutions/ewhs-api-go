@@ -317,7 +317,7 @@ func NewClient(baseClient *http.Client, c *Config) (ewhs *Client, err error) {
 	return ewhs, nil
 }
 
-func addUserAgentString(ewhsClient *Client, addition string)(ewhs *Client) {
+func AddUserAgentString(ewhsClient *Client, addition string)(ewhs *Client) {
 	ewhsClient.userAgent = strings.Join([]string{
 		ewhsClient.userAgent,
 		addition,
