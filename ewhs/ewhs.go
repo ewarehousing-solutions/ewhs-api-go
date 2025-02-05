@@ -308,22 +308,21 @@ func NewClient(baseClient *http.Client, c *Config) (ewhs *Client, err error) {
 	}, "/")
 
 	goUserAgentString := strings.Replace(runtime.Version(), "go", "go/", -1)
-
-	appUserAgentString := strings.Join([]string{
-		c.App,
-		c.AppVersion,
-	}, "/")
-
-	domain := "(" + c.Domain + ")"
-
+	
 	ewhs.userAgent = strings.Join([]string{
 		ewhsUserAgentString,
 		goUserAgentString,
-		appUserAgentString,
-		domain,
 	}, " ")
 
 	return ewhs, nil
+}
+
+func addUserAgentString(ewhsClient *Client, addition string)(ewhs *Client) {
+	ewhsClient.userAgent = strings.Join([]string{
+		ewhsClient.userAgent,
+		addition,
+	}, " ")
+	return ewhsClient
 }
 
 func newError(rsp *Response) error {

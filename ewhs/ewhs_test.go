@@ -32,7 +32,7 @@ func setup() {
 	tMux = http.NewServeMux()
 	tServer = httptest.NewServer(tMux)
 
-	tConf = NewConfig("test_username", "test_password", "test_wms", "test_customer", true, "test_domain", "test_app", "test_version")
+	tConf = NewConfig("test_username", "test_password", "test_wms", "test_customer", true)
 	tClient, _ = NewClient(nil, tConf)
 
 	u, _ := url.Parse(tServer.URL + "/")
@@ -98,7 +98,7 @@ func TestNewClient(t *testing.T) {
 		},
 	}
 
-	conf := NewConfig("test_username", "test_password", "test_wms", "test_customer", true, "test_domain", "test_app", "test_version")
+	conf := NewConfig("test_username", "test_password", "test_wms", "test_customer", true)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -180,11 +180,54 @@ func TestClient_Authorize(t *testing.T) {
 		},
 	}
 
-	conf := NewConfig("test_username", "test_password", "test_wms", "test_customer", true, "test_domain", "test_app", "test_version")
+	conf := NewConfig("test_username", "test_password", "test_wms", "test_customer", true)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := NewClient(tt.client, conf)
 			assert.Nil(t, err)
+		})
+	}
+}
+
+func TestAddUserAgentString(t *testing.T) {
+	tests := []struct {
+		name           string
+		initialAgent   string
+		addition       string
+		expectedAgent  string
+	}{
+		{
+			name:          "adds string to existing user agent",
+			initialAgent:  "ewhs-api-go/1.0.4 go/1.16 test_app/test_version",
+			addition:      "custom/1.0",
+			expectedAgent: "ewhs-api-go/1.0.4 go/1.16 test_app/test_version custom/1.0",
+		},
+		{
+			name:          "adds string to empty user agent",
+			initialAgent:  "",
+			addition:      "custom/1.0",
+			expectedAgent: " custom/1.0",
+		},
+		{
+			name:          "adds empty string to user agent",
+			initialAgent:  "ewhs-api-go/1.0.4",
+			addition:      "",
+			expectedAgent: "ewhs-api-go/1.0.4 ",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Create a test client with the initial user agent
+			client := &Client{
+				userAgent: tt.initialAgent,
+			}
+
+			// Call the function
+			result := addUserAgentString(client, tt.addition)
+
+			// Check the result
+			assert.Equal(t, tt.expectedAgent, result.userAgent, "User agent string should match expected value")
 		})
 	}
 }
